@@ -1,0 +1,1134 @@
+<!DOCTYPE html>
+<html lang="ru">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Калькулятор НДФЛ с продажи недвижимости 2025 | Агентство «Недвижимость и Право»</title>
+    <style>
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+
+        :root {
+            --primary-color: #7C2E3D;
+            --secondary-color: #F5E6C8;
+            --accent-color: #9B7A4F;
+            --text-dark: #2C2C2C;
+            --text-light: #FFFFFF;
+            --success-color: #2E7D32;
+            --warning-color: #ED6C02;
+            --error-color: #D32F2F;
+            --border-color: #D4C5B9;
+            --shadow: 0 4px 6px rgba(124, 46, 61, 0.1);
+            --shadow-lg: 0 10px 25px rgba(124, 46, 61, 0.15);
+        }
+
+        body {
+            font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+            background: linear-gradient(135deg, var(--secondary-color) 0%, #FDFCFA 100%);
+            color: var(--text-dark);
+            line-height: 1.6;
+            min-height: 100vh;
+            display: flex;
+            flex-direction: column;
+        }
+
+        .header {
+            background: var(--primary-color);
+            color: var(--text-light);
+            padding: 2rem 1rem;
+            text-align: center;
+            box-shadow: var(--shadow-lg);
+        }
+
+        .header h1 {
+            font-size: 1.75rem;
+            margin-bottom: 0.5rem;
+            font-weight: 600;
+        }
+
+        .header p {
+            font-size: 0.95rem;
+            opacity: 0.95;
+            max-width: 800px;
+            margin: 0 auto;
+        }
+
+        .container {
+            max-width: 900px;
+            margin: 2rem auto;
+            padding: 0 1rem;
+            flex: 1;
+        }
+
+        .progress-bar {
+            background: white;
+            border-radius: 12px;
+            padding: 1.5rem;
+            margin-bottom: 2rem;
+            box-shadow: var(--shadow);
+        }
+
+        .progress-steps {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            position: relative;
+            margin-bottom: 0.5rem;
+        }
+
+        .progress-line {
+            position: absolute;
+            top: 20px;
+            left: 0;
+            right: 0;
+            height: 3px;
+            background: var(--border-color);
+            z-index: 0;
+        }
+
+        .progress-line-fill {
+            position: absolute;
+            top: 0;
+            left: 0;
+            height: 100%;
+            background: var(--primary-color);
+            transition: width 0.3s ease;
+        }
+
+        .progress-step {
+            position: relative;
+            z-index: 1;
+            text-align: center;
+            flex: 1;
+        }
+
+        .progress-circle {
+            width: 40px;
+            height: 40px;
+            border-radius: 50%;
+            background: white;
+            border: 3px solid var(--border-color);
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            margin: 0 auto 0.5rem;
+            font-weight: 600;
+            transition: all 0.3s ease;
+        }
+
+        .progress-step.active .progress-circle {
+            background: var(--primary-color);
+            color: white;
+            border-color: var(--primary-color);
+            transform: scale(1.1);
+        }
+
+        .progress-step.completed .progress-circle {
+            background: var(--accent-color);
+            border-color: var(--accent-color);
+            color: white;
+        }
+
+        .progress-label {
+            font-size: 0.85rem;
+            color: var(--text-dark);
+            font-weight: 500;
+        }
+
+        .card {
+            background: white;
+            border-radius: 12px;
+            padding: 2rem;
+            box-shadow: var(--shadow);
+            margin-bottom: 2rem;
+        }
+
+        .step {
+            display: none;
+        }
+
+        .step.active {
+            display: block;
+            animation: fadeIn 0.3s ease;
+        }
+
+        @keyframes fadeIn {
+            from {
+                opacity: 0;
+                transform: translateY(10px);
+            }
+            to {
+                opacity: 1;
+                transform: translateY(0);
+            }
+        }
+
+        .form-group {
+            margin-bottom: 1.5rem;
+        }
+
+        label {
+            display: block;
+            margin-bottom: 0.5rem;
+            font-weight: 600;
+            color: var(--primary-color);
+        }
+
+        input[type="number"],
+        input[type="text"],
+        select {
+            width: 100%;
+            padding: 0.75rem;
+            border: 2px solid var(--border-color);
+            border-radius: 8px;
+            font-size: 1rem;
+            transition: border-color 0.3s ease;
+        }
+
+        input[type="number"]:focus,
+        input[type="text"]:focus,
+        select:focus {
+            outline: none;
+            border-color: var(--primary-color);
+        }
+
+        .property-item {
+            background: var(--secondary-color);
+            padding: 1.5rem;
+            border-radius: 8px;
+            margin-bottom: 1rem;
+            border-left: 4px solid var(--accent-color);
+        }
+
+        .property-item h4 {
+            color: var(--primary-color);
+            margin-bottom: 1rem;
+        }
+
+        .warning-box {
+            background: #FFF4E5;
+            border-left: 4px solid var(--warning-color);
+            padding: 1rem;
+            margin-top: 0.5rem;
+            border-radius: 4px;
+        }
+
+        .warning-box strong {
+            color: var(--warning-color);
+        }
+
+        .info-box {
+            background: #E3F2FD;
+            border-left: 4px solid #1976D2;
+            padding: 1rem;
+            margin-top: 1rem;
+            border-radius: 4px;
+            font-size: 0.9rem;
+        }
+
+        .success-box {
+            background: #E8F5E9;
+            border-left: 4px solid var(--success-color);
+            padding: 1rem;
+            margin-top: 1rem;
+            border-radius: 4px;
+        }
+
+        .collapsible {
+            background: var(--secondary-color);
+            padding: 0.75rem 1rem;
+            border-radius: 8px;
+            cursor: pointer;
+            margin-top: 0.5rem;
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            transition: background 0.3s ease;
+        }
+
+        .collapsible:hover {
+            background: #EFE0CA;
+        }
+
+        .collapsible-content {
+            max-height: 0;
+            overflow: hidden;
+            transition: max-height 0.3s ease;
+        }
+
+        .collapsible-content.open {
+            max-height: 1000px;
+            margin-top: 1rem;
+        }
+
+        .collapsible-content ul {
+            list-style: none;
+            padding-left: 0;
+        }
+
+        .collapsible-content li {
+            padding: 0.5rem 0;
+            padding-left: 1.5rem;
+            position: relative;
+        }
+
+        .collapsible-content li:before {
+            content: "✓";
+            position: absolute;
+            left: 0;
+            color: var(--primary-color);
+            font-weight: bold;
+        }
+
+        .radio-group {
+            display: flex;
+            flex-direction: column;
+            gap: 1rem;
+        }
+
+        .radio-option {
+            display: flex;
+            align-items: center;
+            padding: 1rem;
+            border: 2px solid var(--border-color);
+            border-radius: 8px;
+            cursor: pointer;
+            transition: all 0.3s ease;
+        }
+
+        .radio-option:hover {
+            border-color: var(--accent-color);
+            background: var(--secondary-color);
+        }
+
+        .radio-option input[type="radio"] {
+            margin-right: 1rem;
+            width: 20px;
+            height: 20px;
+            cursor: pointer;
+        }
+
+        .radio-option.selected {
+            border-color: var(--primary-color);
+            background: var(--secondary-color);
+        }
+
+        .button-group {
+            display: flex;
+            gap: 1rem;
+            margin-top: 2rem;
+        }
+
+        button {
+            flex: 1;
+            padding: 0.875rem 1.5rem;
+            border: none;
+            border-radius: 8px;
+            font-size: 1rem;
+            font-weight: 600;
+            cursor: pointer;
+            transition: all 0.3s ease;
+        }
+
+        .btn-primary {
+            background: var(--primary-color);
+            color: white;
+        }
+
+        .btn-primary:hover {
+            background: #6A2633;
+            transform: translateY(-2px);
+            box-shadow: var(--shadow-lg);
+        }
+
+        .btn-secondary {
+            background: var(--accent-color);
+            color: white;
+        }
+
+        .btn-secondary:hover {
+            background: #8A6A43;
+        }
+
+        .btn-outline {
+            background: white;
+            color: var(--primary-color);
+            border: 2px solid var(--primary-color);
+        }
+
+        .btn-outline:hover {
+            background: var(--primary-color);
+            color: white;
+        }
+
+        button:disabled {
+            opacity: 0.5;
+            cursor: not-allowed;
+        }
+
+        .result-section {
+            background: var(--secondary-color);
+            border-radius: 12px;
+            padding: 2rem;
+            margin-top: 2rem;
+        }
+
+        .result-row {
+            display: flex;
+            justify-content: space-between;
+            padding: 0.75rem 0;
+            border-bottom: 1px solid var(--border-color);
+        }
+
+        .result-row:last-child {
+            border-bottom: none;
+        }
+
+        .result-label {
+            font-weight: 500;
+        }
+
+        .result-value {
+            font-weight: 600;
+            color: var(--primary-color);
+        }
+
+        .final-tax {
+            background: var(--primary-color);
+            color: white;
+            padding: 1.5rem;
+            border-radius: 8px;
+            text-align: center;
+            margin-top: 1.5rem;
+        }
+
+        .final-tax h3 {
+            font-size: 1.25rem;
+            margin-bottom: 0.5rem;
+        }
+
+        .final-tax .amount {
+            font-size: 2.5rem;
+            font-weight: 700;
+        }
+
+        .dates-box {
+            background: #FFF3E0;
+            padding: 1.5rem;
+            border-radius: 8px;
+            margin-top: 1.5rem;
+            border-left: 4px solid var(--accent-color);
+        }
+
+        .dates-box h4 {
+            color: var(--primary-color);
+            margin-bottom: 1rem;
+        }
+
+        .dates-box ul {
+            list-style: none;
+            padding: 0;
+        }
+
+        .dates-box li {
+            padding: 0.5rem 0;
+            padding-left: 1.5rem;
+            position: relative;
+        }
+
+        .dates-box li:before {
+            content: "📅";
+            position: absolute;
+            left: 0;
+        }
+
+        .footer {
+            background: var(--primary-color);
+            color: white;
+            padding: 2rem 1rem;
+            text-align: center;
+            margin-top: auto;
+        }
+
+        .footer h3 {
+            font-size: 1.25rem;
+            margin-bottom: 1rem;
+        }
+
+        .footer-contacts {
+            display: flex;
+            flex-direction: column;
+            gap: 0.75rem;
+            margin: 1.5rem 0;
+            font-size: 1.1rem;
+        }
+
+        .footer-contacts a {
+            color: white;
+            text-decoration: none;
+            transition: opacity 0.3s ease;
+        }
+
+        .footer-contacts a:hover {
+            opacity: 0.8;
+        }
+
+        .footer-info {
+            margin-top: 1.5rem;
+            opacity: 0.9;
+            font-size: 0.95rem;
+        }
+
+        .footer-info p {
+            margin: 0.25rem 0;
+        }
+
+        @media (max-width: 768px) {
+            .header h1 {
+                font-size: 1.35rem;
+            }
+
+            .progress-label {
+                font-size: 0.7rem;
+            }
+
+            .progress-circle {
+                width: 35px;
+                height: 35px;
+                font-size: 0.9rem;
+            }
+
+            .card {
+                padding: 1.5rem;
+            }
+
+            .button-group {
+                flex-direction: column;
+            }
+
+            .final-tax .amount {
+                font-size: 2rem;
+            }
+        }
+
+        .cadastral-info {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            background: #F0F0F0;
+            padding: 0.75rem;
+            border-radius: 6px;
+            margin-top: 0.5rem;
+            font-size: 0.9rem;
+        }
+
+        .cadastral-info span {
+            font-weight: 600;
+            color: var(--accent-color);
+        }
+
+        .share-input-group {
+            display: flex;
+            gap: 1rem;
+            align-items: center;
+        }
+
+        .share-input-group input {
+            flex: 1;
+        }
+
+        .share-input-group span {
+            font-size: 1.5rem;
+            font-weight: 600;
+            color: var(--primary-color);
+        }
+    </style>
+</head>
+<body>
+    <div class="header">
+        <h1>Калькулятор НДФЛ с продажи недвижимости 2025</h1>
+        <p>Расчет налога с учетом прогрессивной шкалы налогообложения</p>
+    </div>
+
+    <div class="container">
+        <div class="progress-bar">
+            <div class="progress-steps">
+                <div class="progress-line">
+                    <div class="progress-line-fill" id="progressLineFill"></div>
+                </div>
+                <div class="progress-step active" data-step="1">
+                    <div class="progress-circle">1</div>
+                    <div class="progress-label">Объекты</div>
+                </div>
+                <div class="progress-step" data-step="2">
+                    <div class="progress-circle">2</div>
+                    <div class="progress-label">Вычеты</div>
+                </div>
+                <div class="progress-step" data-step="3">
+                    <div class="progress-circle">3</div>
+                    <div class="progress-label">Доходы</div>
+                </div>
+                <div class="progress-step" data-step="4">
+                    <div class="progress-circle">4</div>
+                    <div class="progress-label">Расчет</div>
+                </div>
+            </div>
+        </div>
+
+        <div class="card">
+            <!-- Step 1: Properties -->
+            <div class="step active" id="step1">
+                <h2>Шаг 1: Информация об объектах недвижимости</h2>
+                <div class="form-group">
+                    <label for="propertyCount">Сколько объектов недвижимости продано?</label>
+                    <select id="propertyCount" onchange="updatePropertyInputs()">
+                        <option value="1">1 объект</option>
+                        <option value="2">2 объекта</option>
+                        <option value="3">3 объекта</option>
+                        <option value="4">4 объекта</option>
+                        <option value="5">5 объектов</option>
+                        <option value="6">6 объектов</option>
+                        <option value="7">7 объектов</option>
+                        <option value="8">8 объектов</option>
+                        <option value="9">9 объектов</option>
+                        <option value="10">10 объектов</option>
+                    </select>
+                </div>
+                <div id="propertiesContainer"></div>
+                <div class="button-group">
+                    <button class="btn-primary" onclick="goToStep(2)">Далее</button>
+                </div>
+            </div>
+
+            <!-- Step 2: Deductions -->
+            <div class="step" id="step2">
+                <h2>Шаг 2: Уменьшение налоговой базы</h2>
+                <div class="form-group">
+                    <label>Выберите способ уменьшения налоговой базы:</label>
+                    <div class="radio-group">
+                        <label class="radio-option" id="expensesOption">
+                            <input type="radio" name="deductionType" value="expenses" onchange="updateDeductionType()">
+                            <span>Использовать документально подтвержденные расходы</span>
+                        </label>
+                        <label class="radio-option" id="deductionOption">
+                            <input type="radio" name="deductionType" value="deduction" checked onchange="updateDeductionType()">
+                            <span>Использовать имущественный вычет 1 000 000 руб.</span>
+                        </label>
+                    </div>
+                </div>
+
+                <div id="expensesSection" style="display: none;">
+                    <div class="form-group">
+                        <label for="expensesAmount">Сумма документально подтвержденных расходов (руб.):</label>
+                        <input type="number" id="expensesAmount" min="0" step="1" value="0" placeholder="0">
+                        <div class="collapsible" onclick="toggleCollapsible(this)">
+                            <span><strong>💡 Что можно включить в расходы?</strong></span>
+                            <span>▼</span>
+                        </div>
+                        <div class="collapsible-content">
+                            <ul>
+                                <li>Стоимость покупки по договору купли-продажи, договору долевого участия</li>
+                                <li>Расходы на погашение процентов по целевым займам (ипотечным кредитам)</li>
+                                <li>Иные документально подтвержденные расходы, связанные с приобретением</li>
+                            </ul>
+                            <div class="info-box">
+                                <strong>Важно:</strong> Если у вас нет документов или расходы были меньше 1 000 000 руб., рекомендуется использовать имущественный вычет.
+                            </div>
+                        </div>
+                    </div>
+                </div>
+
+                <div id="deductionSection">
+                    <div class="success-box">
+                        <strong>✓ Имущественный вычет 1 000 000 рублей</strong>
+                        <p style="margin-top: 0.5rem;">Вычет будет применен автоматически при расчете налога.</p>
+                    </div>
+                    <div class="form-group" style="margin-top: 1.5rem;">
+                        <label>Продается целый объект или доля в праве?</label>
+                        <div class="radio-group">
+                            <label class="radio-option" id="wholePropertyOption">
+                                <input type="radio" name="propertyType" value="whole" checked onchange="updatePropertyType()">
+                                <span>Целый объект (вычет 1 000 000 руб.)</span>
+                            </label>
+                            <label class="radio-option" id="sharePropertyOption">
+                                <input type="radio" name="propertyType" value="share" onchange="updatePropertyType()">
+                                <span>Доля в праве (вычет пропорционально доле)</span>
+                            </label>
+                        </div>
+                    </div>
+                    <div id="shareInputSection" style="display: none;">
+                        <div class="form-group">
+                            <label>Укажите размер доли:</label>
+                            <div class="share-input-group">
+                                <input type="number" id="shareNumerator" min="1" step="1" value="1" placeholder="1">
+                                <span>/</span>
+                                <input type="number" id="shareDenominator" min="2" step="1" value="2" placeholder="2">
+                            </div>
+                            <div class="info-box" id="shareDeductionInfo" style="margin-top: 1rem;">
+                                <strong>Вычет составит:</strong> <span id="shareDeductionAmount">500 000 руб.</span>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+
+                <div class="button-group">
+                    <button class="btn-outline" onclick="goToStep(1)">Назад</button>
+                    <button class="btn-primary" onclick="goToStep(3)">Далее</button>
+                </div>
+            </div>
+
+            <!-- Step 3: Other Income -->
+            <div class="step" id="step3">
+                <h2>Шаг 3: Другие доходы за год</h2>
+                <div class="form-group">
+                    <label for="otherIncome">Сумма других нетрудовых доходов за год (руб.):</label>
+                    <input type="number" id="otherIncome" min="0" step="1" value="0" placeholder="0">
+                    <div class="collapsible" onclick="toggleCollapsible(this)">
+                        <span><strong>💡 Какие доходы нужно учитывать?</strong></span>
+                        <span>▼</span>
+                    </div>
+                    <div class="collapsible-content">
+                        <ul>
+                            <li>Доходы от продажи другого имущества (автомобили, гаражи и т.д.)</li>
+                            <li>Доходы в виде стоимости имущества, полученного в порядке дарения (не от близких родственников)</li>
+                            <li>Страховые выплаты по договорам страхования</li>
+                            <li>Выплаты по пенсионному обеспечению (негосударственному)</li>
+                            <li>Доходы от долевого участия (дивиденды) - учитываются отдельно</li>
+                            <li>Доходы по операциям с ценными бумагами и производными финансовыми инструментами</li>
+                            <li>Доходы от реализации долей участия в уставном капитале организаций</li>
+                            <li>Проценты по вкладам в банках сверх необлагаемой суммы</li>
+                            <li>Доходы от цифровой валюты и цифровых финансовых активов</li>
+                        </ul>
+                        <div class="warning-box" style="margin-top: 1rem;">
+                            <strong>⚠️ ВАЖНО:</strong> НЕ включайте заработную плату и трудовые доходы - они облагаются отдельно!
+                        </div>
+                    </div>
+                </div>
+                <div class="button-group">
+                    <button class="btn-outline" onclick="goToStep(2)">Назад</button>
+                    <button class="btn-primary" onclick="calculateTax()">Рассчитать налог</button>
+                </div>
+            </div>
+
+            <!-- Step 4: Results -->
+            <div class="step" id="step4">
+                <h2>Результаты расчета</h2>
+                <div class="result-section" id="resultsContainer">
+                    <!-- Results will be inserted here -->
+                </div>
+                <div class="dates-box">
+                    <h4>⏰ Важные сроки:</h4>
+                    <ul>
+                        <li><strong>До 30 апреля</strong> года, следующего за годом продажи - подать декларацию 3-НДФЛ</li>
+                        <li><strong>До 15 июля</strong> года, следующего за годом продажи - уплатить налог</li>
+                    </ul>
+                </div>
+                <div class="button-group">
+                    <button class="btn-secondary" onclick="resetCalculator()">Новый расчет</button>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <div class="footer">
+        <h3>Нужна помощь с подготовкой декларации или консультация по налогам?</h3>
+        <div class="footer-contacts">
+            <div>📞 <a href="tel:+79101846723">+7 (910)-184-67-23</a></div>
+            <div>✉️ <a href="mailto:yurist33@bk.ru">yurist33@bk.ru</a></div>
+        </div>
+        <div class="footer-info">
+            <p><strong>Агентство «Недвижимость и Право»</strong></p>
+            <p>Г.Владимир, ул. Мира, д.26</p>
+            <p>© ИП Сторожук О.Г.</p>
+        </div>
+    </div>
+
+    <script>
+        // Application state
+        let currentStep = 1;
+        let properties = [];
+
+        // Initialize
+        document.addEventListener('DOMContentLoaded', function() {
+            updatePropertyInputs();
+            updateDeductionType();
+        });
+
+        // Navigation
+        function goToStep(step) {
+            // Validate current step before proceeding
+            if (step > currentStep && !validateStep(currentStep)) {
+                return;
+            }
+
+            // Hide all steps
+            document.querySelectorAll('.step').forEach(s => s.classList.remove('active'));
+            
+            // Show target step
+            document.getElementById('step' + step).classList.add('active');
+            
+            // Update progress bar
+            updateProgressBar(step);
+            
+            currentStep = step;
+            
+            // Scroll to top
+            window.scrollTo({ top: 0, behavior: 'smooth' });
+        }
+
+        function updateProgressBar(step) {
+            const steps = document.querySelectorAll('.progress-step');
+            const progressLine = document.getElementById('progressLineFill');
+            
+            steps.forEach((s, index) => {
+                const stepNum = index + 1;
+                if (stepNum < step) {
+                    s.classList.add('completed');
+                    s.classList.remove('active');
+                } else if (stepNum === step) {
+                    s.classList.add('active');
+                    s.classList.remove('completed');
+                } else {
+                    s.classList.remove('active', 'completed');
+                }
+            });
+            
+            // Update progress line
+            const progress = ((step - 1) / 3) * 100;
+            progressLine.style.width = progress + '%';
+        }
+
+        function validateStep(step) {
+            if (step === 1) {
+                // Validate properties
+                const count = parseInt(document.getElementById('propertyCount').value);
+                for (let i = 1; i <= count; i++) {
+                    const salePrice = parseFloat(document.getElementById('salePrice' + i).value);
+                    const cadastralValue = parseFloat(document.getElementById('cadastralValue' + i).value);
+                    
+                    if (!salePrice || salePrice <= 0) {
+                        alert('Пожалуйста, укажите цену продажи для объекта ' + i);
+                        return false;
+                    }
+                    if (!cadastralValue || cadastralValue <= 0) {
+                        alert('Пожалуйста, укажите кадастровую стоимость для объекта ' + i);
+                        return false;
+                    }
+                }
+            }
+            return true;
+        }
+
+        // Property inputs
+        function updatePropertyInputs() {
+            const count = parseInt(document.getElementById('propertyCount').value);
+            const container = document.getElementById('propertiesContainer');
+            container.innerHTML = '';
+            
+            for (let i = 1; i <= count; i++) {
+                const propertyDiv = document.createElement('div');
+                propertyDiv.className = 'property-item';
+                propertyDiv.innerHTML = `
+                    <h4>Объект ${i}</h4>
+                    <div class="form-group">
+                        <label for="salePrice${i}">Цена продажи (руб.):</label>
+                        <input type="number" id="salePrice${i}" min="0" step="1" placeholder="Например: 5000000" onchange="checkCadastralRule(${i})">
+                    </div>
+                    <div class="form-group">
+                        <label for="cadastralValue${i}">Кадастровая стоимость на 1 января года продажи (руб.):</label>
+                        <input type="number" id="cadastralValue${i}" min="0" step="1" placeholder="Например: 4500000" onchange="checkCadastralRule(${i})">
+                        <div class="cadastral-info" id="cadastralInfo${i}" style="display: none;">
+                            <span>70% от кадастровой стоимости:</span>
+                            <span id="cadastral70_${i}">0 руб.</span>
+                        </div>
+                        <div id="cadastralWarning${i}"></div>
+                    </div>
+                `;
+                container.appendChild(propertyDiv);
+            }
+        }
+
+        function checkCadastralRule(propertyNum) {
+            const salePrice = parseFloat(document.getElementById('salePrice' + propertyNum).value) || 0;
+            const cadastralValue = parseFloat(document.getElementById('cadastralValue' + propertyNum).value) || 0;
+            const cadastral70 = cadastralValue * 0.7;
+            
+            const infoDiv = document.getElementById('cadastralInfo' + propertyNum);
+            const warningDiv = document.getElementById('cadastralWarning' + propertyNum);
+            
+            if (cadastralValue > 0) {
+                infoDiv.style.display = 'flex';
+                document.getElementById('cadastral70_' + propertyNum).textContent = 
+                    formatNumber(cadastral70) + ' руб.';
+                
+                if (salePrice > 0 && salePrice < cadastral70) {
+                    warningDiv.innerHTML = `
+                        <div class="warning-box">
+                            <strong>⚠️ Внимание!</strong> Цена продажи меньше 70% от кадастровой стоимости. 
+                            Для расчета налога будет использована сумма <strong>${formatNumber(cadastral70)} руб.</strong> 
+                            (70% от кадастра) согласно НК РФ.
+                        </div>
+                    `;
+                } else {
+                    warningDiv.innerHTML = '';
+                }
+            } else {
+                infoDiv.style.display = 'none';
+                warningDiv.innerHTML = '';
+            }
+        }
+
+        // Deduction type
+        function updateDeductionType() {
+            const type = document.querySelector('input[name="deductionType"]:checked').value;
+            const expensesSection = document.getElementById('expensesSection');
+            const deductionSection = document.getElementById('deductionSection');
+            
+            if (type === 'expenses') {
+                expensesSection.style.display = 'block';
+                deductionSection.style.display = 'none';
+                document.getElementById('expensesOption').classList.add('selected');
+                document.getElementById('deductionOption').classList.remove('selected');
+            } else {
+                expensesSection.style.display = 'none';
+                deductionSection.style.display = 'block';
+                document.getElementById('expensesOption').classList.remove('selected');
+                document.getElementById('deductionOption').classList.add('selected');
+            }
+        }
+
+        // Property type
+        function updatePropertyType() {
+            const type = document.querySelector('input[name="propertyType"]:checked').value;
+            const shareInputSection = document.getElementById('shareInputSection');
+            
+            if (type === 'share') {
+                shareInputSection.style.display = 'block';
+                document.getElementById('sharePropertyOption').classList.add('selected');
+                document.getElementById('wholePropertyOption').classList.remove('selected');
+                updateShareDeduction();
+            } else {
+                shareInputSection.style.display = 'none';
+                document.getElementById('sharePropertyOption').classList.remove('selected');
+                document.getElementById('wholePropertyOption').classList.add('selected');
+            }
+        }
+
+        function updateShareDeduction() {
+            const numerator = parseFloat(document.getElementById('shareNumerator').value) || 1;
+            const denominator = parseFloat(document.getElementById('shareDenominator').value) || 2;
+            const shareDeduction = 1000000 * (numerator / denominator);
+            document.getElementById('shareDeductionAmount').textContent = formatNumber(shareDeduction) + ' руб.';
+        }
+
+        // Add event listeners for share inputs
+        document.addEventListener('DOMContentLoaded', function() {
+            const shareNumerator = document.getElementById('shareNumerator');
+            const shareDenominator = document.getElementById('shareDenominator');
+            if (shareNumerator) shareNumerator.addEventListener('input', updateShareDeduction);
+            if (shareDenominator) shareDenominator.addEventListener('input', updateShareDeduction);
+        });
+
+        // Collapsible
+        function toggleCollapsible(element) {
+            const content = element.nextElementSibling;
+            const arrow = element.querySelector('span:last-child');
+            
+            if (content.classList.contains('open')) {
+                content.classList.remove('open');
+                arrow.textContent = '▼';
+            } else {
+                content.classList.add('open');
+                arrow.textContent = '▲';
+            }
+        }
+
+        // Tax calculation
+        function calculateTax() {
+            // Collect property data
+            const propertyCount = parseInt(document.getElementById('propertyCount').value);
+            let totalSaleAmount = 0;
+            let totalTaxBase = 0;
+            let cadastralRuleApplied = [];
+            
+            for (let i = 1; i <= propertyCount; i++) {
+                const salePrice = parseFloat(document.getElementById('salePrice' + i).value) || 0;
+                const cadastralValue = parseFloat(document.getElementById('cadastralValue' + i).value) || 0;
+                const cadastral70 = cadastralValue * 0.7;
+                
+                totalSaleAmount += salePrice;
+                
+                // Apply 70% rule
+                if (salePrice < cadastral70) {
+                    totalTaxBase += cadastral70;
+                    cadastralRuleApplied.push({
+                        num: i,
+                        salePrice: salePrice,
+                        cadastral70: cadastral70
+                    });
+                } else {
+                    totalTaxBase += salePrice;
+                }
+            }
+            
+            // Get deduction/expenses
+            let deductionAmount = 0;
+            let deductionType = document.querySelector('input[name="deductionType"]:checked').value;
+            
+            if (deductionType === 'expenses') {
+                deductionAmount = parseFloat(document.getElementById('expensesAmount').value) || 0;
+            } else {
+                const propertyType = document.querySelector('input[name="propertyType"]:checked').value;
+                if (propertyType === 'share') {
+                    const numerator = parseFloat(document.getElementById('shareNumerator').value) || 1;
+                    const denominator = parseFloat(document.getElementById('shareDenominator').value) || 2;
+                    deductionAmount = 1000000 * (numerator / denominator);
+                } else {
+                    deductionAmount = 1000000;
+                }
+            }
+            
+            // Get other income
+            const otherIncome = parseFloat(document.getElementById('otherIncome').value) || 0;
+            
+            // Calculate tax base
+            let taxBase = totalTaxBase - deductionAmount + otherIncome;
+            taxBase = Math.max(0, taxBase); // Cannot be negative
+            
+            // Calculate tax using progressive scale
+            let tax = 0;
+            let taxCalculation = '';
+            
+            if (taxBase <= 2400000) {
+                tax = taxBase * 0.13;
+                taxCalculation = `${formatNumber(taxBase)} × 13% = ${formatNumber(tax)} руб.`;
+            } else {
+                const baseTax = 312000;
+                const excessTax = (taxBase - 2400000) * 0.15;
+                tax = baseTax + excessTax;
+                taxCalculation = `312 000 + (${formatNumber(taxBase - 2400000)}) × 15% = ${formatNumber(tax)} руб.`;
+            }
+            
+            // Display results
+            displayResults({
+                totalSaleAmount,
+                totalTaxBase,
+                cadastralRuleApplied,
+                deductionAmount,
+                deductionType,
+                otherIncome,
+                taxBase,
+                tax,
+                taxCalculation
+            });
+            
+            goToStep(4);
+        }
+
+        function displayResults(data) {
+            const container = document.getElementById('resultsContainer');
+            
+            let html = '<h3 style="color: var(--primary-color); margin-bottom: 1.5rem;">Детальный расчет налога</h3>';
+            
+            // Sale information
+            html += '<div class="result-row">';
+            html += '<span class="result-label">Общая сумма от продажи недвижимости:</span>';
+            html += `<span class="result-value">${formatNumber(data.totalSaleAmount)} руб.</span>`;
+            html += '</div>';
+            
+            // Cadastral rule
+            if (data.cadastralRuleApplied.length > 0) {
+                html += '<div class="result-row">';
+                html += '<span class="result-label">Применено правило 70% от кадастра:</span>';
+                html += '<span class="result-value">Да</span>';
+                html += '</div>';
+                
+                data.cadastralRuleApplied.forEach(item => {
+                    html += '<div class="info-box" style="margin: 0.5rem 0;">';
+                    html += `<strong>Объект ${item.num}:</strong> использована сумма ${formatNumber(item.cadastral70)} руб. вместо ${formatNumber(item.salePrice)} руб.`;
+                    html += '</div>';
+                });
+            }
+            
+            html += '<div class="result-row">';
+            html += '<span class="result-label">База до вычетов:</span>';
+            html += `<span class="result-value">${formatNumber(data.totalTaxBase)} руб.</span>`;
+            html += '</div>';
+            
+            // Deduction
+            html += '<div class="result-row">';
+            if (data.deductionType === 'expenses') {
+                html += '<span class="result-label">Документально подтвержденные расходы:</span>';
+            } else {
+                html += '<span class="result-label">Имущественный вычет:</span>';
+            }
+            html += `<span class="result-value">-${formatNumber(data.deductionAmount)} руб.</span>`;
+            html += '</div>';
+            
+            // Other income
+            if (data.otherIncome > 0) {
+                html += '<div class="result-row">';
+                html += '<span class="result-label">Другие нетрудовые доходы:</span>';
+                html += `<span class="result-value">+${formatNumber(data.otherIncome)} руб.</span>`;
+                html += '</div>';
+            }
+            
+            // Tax base
+            html += '<div class="result-row" style="border-top: 2px solid var(--accent-color); padding-top: 1rem; margin-top: 1rem;">';
+            html += '<span class="result-label"><strong>Налоговая база:</strong></span>';
+            html += `<span class="result-value" style="font-size: 1.2rem;">${formatNumber(data.taxBase)} руб.</span>`;
+            html += '</div>';
+            
+            // Tax calculation
+            html += '<div class="result-row">';
+            html += '<span class="result-label">Расчет налога:</span>';
+            html += `<span class="result-value">${data.taxCalculation}</span>`;
+            html += '</div>';
+            
+            // Progressive scale info
+            html += '<div class="info-box" style="margin-top: 1rem;">';
+            html += '<strong>Применена прогрессивная шкала НДФЛ (с 2025 года):</strong><br>';
+            html += '• До 2 400 000 руб. — ставка 13%<br>';
+            html += '• Свыше 2 400 000 руб. — 312 000 руб. + 15% от суммы превышения';
+            html += '</div>';
+            
+            // Final tax
+            html += '<div class="final-tax">';
+            html += '<h3>Сумма налога к уплате:</h3>';
+            html += `<div class="amount">${formatNumber(data.tax)} ₽</div>`;
+            html += '</div>';
+            
+            container.innerHTML = html;
+        }
+
+        function formatNumber(num) {
+            return Math.round(num).toString().replace(/\B(?=(\d{3})+(?!\d))/g, ' ');
+        }
+
+        function resetCalculator() {
+            // Reset to step 1
+            goToStep(1);
+            
+            // Reset form values
+            document.getElementById('propertyCount').value = '1';
+            document.getElementById('otherIncome').value = '0';
+            document.getElementById('expensesAmount').value = '0';
+            
+            // Reset radio buttons
+            document.querySelector('input[name="deductionType"][value="deduction"]').checked = true;
+            document.querySelector('input[name="propertyType"][value="whole"]').checked = true;
+            
+            // Update UI
+            updatePropertyInputs();
+            updateDeductionType();
+            updatePropertyType();
+            
+            // Scroll to top
+            window.scrollTo({ top: 0, behavior: 'smooth' });
+        }
+    </script>
+</body>
+</html>
